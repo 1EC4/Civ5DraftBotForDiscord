@@ -12,6 +12,7 @@ namespace Civ5DraftBot
         public List<Civilization> Bans { get; }
         public List<Picks> PlayerOptions { get; }
         public int NumCivsPerPerson { get; set; }
+        public bool AllowDuplicates { get; set; }
 
         private Random gen;
 
@@ -21,6 +22,7 @@ namespace Civ5DraftBot
             Bans = new List<Civilization>();
             PlayerOptions = new List<Picks>();
             NumCivsPerPerson = 3;
+            AllowDuplicates = false;
 
             gen = new Random();
         }
@@ -37,12 +39,31 @@ namespace Civ5DraftBot
                     do
                     {
                         civ = (Civilization)gen.Next(0, 43);
-                    } while (Bans.Contains(civ) || duplicate(civ, picks));
+                    } while (Bans.Contains(civ) || duplicate(civ, picks) || otherCiv(civ));
                     picks.picks[j] = civ;
                 }
 
                 PlayerOptions.Add(picks);
             }
+        }
+
+        private bool otherCiv(Civilization civ)
+        {
+            if (AllowDuplicates)
+                return false;
+
+            for(int i = 0; i < PlayerOptions.Count - 1; i++)
+            {
+                for(int j = 0; j < NumCivsPerPerson; j++)
+                {
+                    if (PlayerOptions[i].picks[j] == civ)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
 
         private bool duplicate(Civilization civ, Picks picks)

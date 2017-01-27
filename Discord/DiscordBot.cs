@@ -169,6 +169,25 @@ namespace Civ5DraftBot.Discord
                     await e.Channel.SendMessage(r);
                 });
 
+            commands.CreateCommand("ban_chris")
+                .Do(async (e) => {
+                    ulong acc_id = 266733052040970241;
+
+                    if (draft != null)
+                    {
+                        draft.Players.Remove(acc_id);
+                    }
+
+                    await e.Channel.SendMessage(e.User.Mention + " banned Chris. There is no way to unban him though.");
+                });
+
+            commands.CreateCommand("toggle_duplicates")
+                .Do(async (e) => {
+                    draft.AllowDuplicates = !draft.AllowDuplicates;
+
+                    await e.Channel.SendMessage(e.User.Mention + " allow duplicates: " + !draft.AllowDuplicates);
+                });
+
             commands.CreateCommand("generate")
                 .Do(async (e) => {
                     if (draft == null)
@@ -212,6 +231,7 @@ namespace Civ5DraftBot.Discord
             {
                 Thread.Sleep(1);
             }
+            draft = null;
         }
 
         private void Log(object sender, LogMessageEventArgs e)
